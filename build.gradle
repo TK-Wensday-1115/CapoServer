@@ -2,15 +2,16 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.3'
 }
 
-allprojects {
-    apply plugin: 'java'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
+apply plugin: 'application'
+mainClassName = 'pl.edu.agh.toik.ServerApp'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 jar.dependsOn shadowJar
