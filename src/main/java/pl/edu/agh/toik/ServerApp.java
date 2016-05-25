@@ -15,7 +15,7 @@ public class ServerApp {
 
     public static void main(String[] args) {
         CommunicationsServer.registerCallback(ServerApp::printReading);
-        CommunicationsServer.start(8080);
+        CommunicationsServer.start(3737);
         System.out.println("Server started");
     }
 
