@@ -4,18 +4,19 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import pl.edu.agh.student.mkasprz.tk.chart3.SimpleTable?>
 
+<?import javafx.embed.swing.SwingNode?>
 <SplitPane fx:controller="pl.edu.agh.toik.Controller" prefHeight="400.0" prefWidth="600.0"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <items>
         <SplitPane orientation="VERTICAL">
             <items>
                 <SimpleTable fx:id="simpleTable"/>
-                <AnchorPane/>
+                <SwingNode fx:id="pieChartPanel"/>
             </items>
         </SplitPane>
         <SplitPane orientation="VERTICAL">
             <items>
-                <AnchorPane/>
+                <SwingNode fx:id="historyChart"/>
                 <AnchorPane/>
             </items>
         </SplitPane>
