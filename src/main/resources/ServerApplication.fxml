@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import pl.edu.agh.student.mkasprz.tk.chart3.SimpleTable?>
+
+<SplitPane fx:controller="pl.edu.agh.toik.Controller" prefHeight="400.0" prefWidth="600.0"
+           xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <items>
+        <SplitPane orientation="VERTICAL">
+            <items>
+                <SimpleTable fx:id="simpleTable"/>
+                <AnchorPane/>
+            </items>
+        </SplitPane>
+        <SplitPane orientation="VERTICAL">
+            <items>
+                <AnchorPane/>
+                <AnchorPane/>
+            </items>
+        </SplitPane>
+    </items>
+</SplitPane>
