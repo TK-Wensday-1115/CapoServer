@@ -11,12 +11,12 @@
         <SplitPane orientation="VERTICAL">
             <items>
                 <SimpleTable fx:id="simpleTable"/>
-                <SwingNode fx:id="pieChartPanel"/>
+                <SwingNode fx:id="pieChartPanelSwingNode"/>
             </items>
         </SplitPane>
         <SplitPane orientation="VERTICAL">
             <items>
-                <SwingNode fx:id="historyChart"/>
+                <SwingNode fx:id="historyChartSwingNode"/>
                 <AnchorPane/>
             </items>
         </SplitPane>
