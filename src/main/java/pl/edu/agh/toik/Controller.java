@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 
+@SuppressWarnings("Duplicates")
 public class Controller {
 
     @FXML
@@ -70,28 +71,29 @@ public class Controller {
             );
 
             // LASER
-            if (sensorName.startsWith("laser")) {
+            if(sensorName.startsWith("laser")) {
                 // try to split it somehow
                 if (value.contains(";")) {
                     String[] rawLaser = value.split(";");
-                    simpleTable.put("laser dist", rawLaser[0].split(":")[1]);
+                    System.out.println(rawLaser[0].split(":")[1]);
+                    if (value.contains("|")) {
+                        System.out.println(rawLaser[1].split("\\|")[0]);
+                    }
                 }
             }
 
             // ROBOCLOW
             try {
-                if (sensorName.startsWith("roboclawRR") && Double.parseDouble(value) > 0) {
+                if (sensorName.startsWith("roboclawRR")) {
                     historyChart.addNewEntry(RR, Double.parseDouble(value), reading.getTimestamp());
-                } else if (sensorName.startsWith("roboclawRL") && Double.parseDouble(value) > 0) {
+                } else if (sensorName.startsWith("roboclawRL")) {
                     historyChart.addNewEntry(RL, Double.parseDouble(value), reading.getTimestamp());
-                } else if (sensorName.startsWith("roboclawFR") && Double.parseDouble(value) > 0) {
+                } else if (sensorName.startsWith("roboclawFR")) {
                     historyChart.addNewEntry(FR, Double.parseDouble(value), reading.getTimestamp());
-                } else if (sensorName.startsWith("roboclawFL") && Double.parseDouble(value) > 0) {
+                } else if (sensorName.startsWith("roboclawFL")) {
                     historyChart.addNewEntry(FL, Double.parseDouble(value), reading.getTimestamp());
                 }
             } catch (DataLineDoesNotExistException ignore) {}
         });
     }
-
-
 }
