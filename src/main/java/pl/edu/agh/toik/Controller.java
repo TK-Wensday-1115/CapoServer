@@ -17,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 
+import static java.lang.Math.abs;
+
 @SuppressWarnings("Duplicates")
 public class Controller {
 
@@ -32,10 +34,11 @@ public class Controller {
     private SwingNode historyChartSwingNode;
 
     private HistoryChart historyChart;
-    private int RR;
-    private int RL;
-    private int FR;
-    private int FL;
+    // line ids for roboclow
+    private int roboclowRR;
+    private int roboclowRL;
+    private int roboclowFR;
+    private int roboclowFL;
 
     @FXML
     void initialize() {
@@ -45,15 +48,17 @@ public class Controller {
         historyChartSwingNode.setContent(historyChart);
 
         // register lines, one for each motor
-        RL =  historyChart.registerNewLine("Roboclow Rear Left");
-        RR = historyChart.registerNewLine("Roboclow Rear Right");
-        FL = historyChart.registerNewLine("Roboclow Front Left");
-        FR = historyChart.registerNewLine("Roboclow Front Right");
+        roboclowRL =  historyChart.registerNewLine("Roboclow Rear Left");
+        roboclowRR = historyChart.registerNewLine("Roboclow Rear Right");
+        roboclowFL = historyChart.registerNewLine("Roboclow Front Left");
+        roboclowFR = historyChart.registerNewLine("Roboclow Front Right");
 
         CommunicationsServer.registerCallback(this::printReading);
         System.out.println("Callback registered.");
 
         simpleTable.put("READY", "true");
+        pieChartPanel.setChartValue("laser-dist", 1);
+        pieChartPanel.setChartValue("laser-angle", 1);
     }
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter
@@ -62,8 +67,8 @@ public class Controller {
 
     private void printReading(SensorReading reading) {
         Platform.runLater(() -> {
-            String sensorName = reading.getSensorName();
-            String value = reading.getValue();
+            final String sensorName = reading.getSensorName();
+            final String value = reading.getValue();
             simpleTable.put(sensorName, value);
             System.out.format("[%s] %s: <%s> %s\n",
                     dateFormatter.format((TemporalAccessor) reading.getTimestamp()), sensorName,
@@ -72,12 +77,15 @@ public class Controller {
 
             // LASER
             if(sensorName.startsWith("laser")) {
-                // try to split it somehow
                 if (value.contains(";")) {
-                    String[] rawLaser = value.split(";");
-                    simpleTable.put("laser-dist", rawLaser[0].split(":")[1]);
+                    final String[] rawLaser = value.split(";");
+                    String splitVal = rawLaser[0].split(":")[1];
+                    simpleTable.put("laser-dist", splitVal);
+                    pieChartPanel.setChartValue("laser-dist", abs(Double.parseDouble(splitVal)));
                     if (value.contains("|")) {
-                        simpleTable.put("laser-angle", rawLaser[1].split("\\|")[0]);
+                        splitVal = rawLaser[1].split("\\|")[0];
+                        simpleTable.put("laser-angle", splitVal);
+                        pieChartPanel.setChartValue("laser-angle", abs(Double.parseDouble(splitVal)));
                     }
                 }
             }
@@ -85,13 +93,13 @@ public class Controller {
             // ROBOCLOW
             try {
                 if (sensorName.startsWith("roboclawRR")) {
-                    historyChart.addNewEntry(RR, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowRR, Double.parseDouble(value), reading.getTimestamp());
                 } else if (sensorName.startsWith("roboclawRL")) {
-                    historyChart.addNewEntry(RL, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowRL, Double.parseDouble(value), reading.getTimestamp());
                 } else if (sensorName.startsWith("roboclawFR")) {
-                    historyChart.addNewEntry(FR, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowFR, Double.parseDouble(value), reading.getTimestamp());
                 } else if (sensorName.startsWith("roboclawFL")) {
-                    historyChart.addNewEntry(FL, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowFL, Double.parseDouble(value), reading.getTimestamp());
                 }
             } catch (DataLineDoesNotExistException ignore) {}
         });
