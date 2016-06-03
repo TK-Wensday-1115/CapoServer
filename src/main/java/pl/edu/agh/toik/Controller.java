@@ -75,9 +75,9 @@ public class Controller {
                 // try to split it somehow
                 if (value.contains(";")) {
                     String[] rawLaser = value.split(";");
-                    System.out.println(rawLaser[0].split(":")[1]);
+                    simpleTable.put("laser-dist", rawLaser[0].split(":")[1]);
                     if (value.contains("|")) {
-                        System.out.println(rawLaser[1].split("\\|")[0]);
+                        simpleTable.put("laser-angle", rawLaser[1].split("\\|")[0]);
                     }
                 }
             }
