@@ -15,7 +15,8 @@ import pl.edu.agh.toik.historychart.TimeUnit;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
@@ -69,37 +70,41 @@ public class Controller {
         Platform.runLater(() -> {
             final String sensorName = reading.getSensorName();
             final String value = reading.getValue();
-            simpleTable.put(sensorName, value);
-            System.out.format("[%s] %s: <%s> %s\n",
-                    dateFormatter.format((TemporalAccessor) reading.getTimestamp()), sensorName,
-                    reading.getColor(), value
-            );
+//            simpleTable.put(sensorName, value);
+//            System.out.format("[%s] %s: <%s> %s\n",
+//                    dateFormatter.format((TemporalAccessor) reading.getTimestamp()), sensorName,
+//                    reading.getColor(), value
+//            );
 
             // LASER
             if(sensorName.startsWith("laser")) {
-                if (value.contains(";")) {
-                    final String[] rawLaser = value.split(";");
-                    String splitVal = rawLaser[0].split(":")[1];
-                    simpleTable.put("laser-dist", splitVal);
-                    pieChartPanel.setChartValue("laser-dist", abs(Double.parseDouble(splitVal)));
-                    if (value.contains("|")) {
-                        splitVal = rawLaser[1].split("\\|")[0];
-                        simpleTable.put("laser-angle", splitVal);
-                        pieChartPanel.setChartValue("laser-angle", abs(Double.parseDouble(splitVal)));
-                    }
+                if (value.contains("|")) {
+                    final String[] laserMeasurements = value.split("\\|");
+                    double averageDistance = Arrays.asList(laserMeasurements).stream()
+                            .map(pair -> {
+                                String[] parts = pair.split(";");
+                                String distPart = (parts[0].startsWith("dist")) ? parts[0] : parts[1];
+                                String distFloat = distPart.split(":")[1];
+                                return Float.parseFloat(distFloat);
+                            })
+                            .collect(Collectors.averagingDouble(v -> v));
+                    simpleTable.put("laser-avg-dist", String.valueOf(averageDistance));
+                    pieChartPanel.setChartValue("laser-avg-dist", abs(averageDistance));
                 }
+            } else {
+                simpleTable.put(sensorName, value);
             }
 
             // ROBOCLOW
             try {
                 if (sensorName.startsWith("roboclawRR")) {
-                    historyChart.addNewEntry(roboclowRR, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowRR, Double.parseDouble(value), new java.util.Date()); // reading.getTimestamp()
                 } else if (sensorName.startsWith("roboclawRL")) {
-                    historyChart.addNewEntry(roboclowRL, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowRL, Double.parseDouble(value), new java.util.Date());
                 } else if (sensorName.startsWith("roboclawFR")) {
-                    historyChart.addNewEntry(roboclowFR, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowFR, Double.parseDouble(value), new java.util.Date());
                 } else if (sensorName.startsWith("roboclawFL")) {
-                    historyChart.addNewEntry(roboclowFL, Double.parseDouble(value), reading.getTimestamp());
+                    historyChart.addNewEntry(roboclowFL, Double.parseDouble(value), new java.util.Date());
                 }
             } catch (DataLineDoesNotExistException ignore) {}
         });
